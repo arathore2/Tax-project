@@ -16,4 +16,4 @@ After setting the enviornment variable launch the .sln with Visual Studio, the p
 
 ## Extending Software:
 
-At the moment, the system is very simple, but adding onto it should be fairly straight forward.  If you have new Tax Collectors, you simply need to implement the ITaxCollector interface into a new class, with the class being placed in Models.  In terms of recommendations, we'll likely want to create a factory that picks uses dependency injection to instantiate the TaxCollector we care about, and initializes the TaxService when it starts up.  
+At the moment, the system is very simple, but adding onto it should be fairly straight forward.  If you have new Tax Collectors, you simply need to implement the ITaxCollector interface into a new class, with the class being placed in Models.  In terms of recommendations, we'll likely want to create a factory that uses dependency injection to instantiate the TaxCollector we care about, and initializes the TaxService when it starts up.  
