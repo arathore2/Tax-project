@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Web;
 using System.Linq;
 using System.Net.Http.Headers;
+using TaxLib.Models.Entities;
 
 namespace TaxLib.Models
 {
@@ -22,259 +23,6 @@ namespace TaxLib.Models
         //I'll probably want to move this to an environment  variable in the future that I intialize the class with, just so its configurable.  But unless the Uri changes, it should be fine. 
         private string JarTaxCollectorUri = "https://api.taxjar.com/v2/";
 
-        //I'm putting Rate inside the Response object, due to how Tax Jar returns objects.
-        // This way, I can deseralize the objects far easier.
-        class JarJsonTaxRateResponse
-        {
-            [JsonProperty("rate")]
-            public Rate rate;
-        }
-
-
-        public class Rate
-        {
-            [JsonProperty("zip")]
-            public string zip;
-
-            [JsonProperty("country")]
-            public string country;
-
-            [JsonProperty("country_rate")]
-            public double country_rate;
-
-            [JsonProperty("state")]
-            public string state;
-
-            [JsonProperty("state_rate")]
-            public double state_rate;
-
-            [JsonProperty("county")]
-            public string county;
-
-            [JsonProperty("county_rate")]
-            public double county_rate;
-
-            [JsonProperty("city")]
-            public string city;
-
-            [JsonProperty("city_rate")]
-            public double city_rate;
-
-            [JsonProperty("combined_distrct_rate")]
-            public float combined_district_rate;
-
-            [JsonProperty("combined_rate")]
-            public float combined_rate;
-
-            [JsonProperty("freight_taxable")]
-            public bool freight_taxable;
-        }
-
-        class JarJsonTaxRateRequest
-        {
-            [JsonProperty("country")]
-            public string country;
-
-            [JsonProperty("zip")]
-            public string zip;
-
-            [JsonProperty("state")]
-            public string state;
-
-            [JsonProperty("city")]
-            public string city;
-
-            [JsonProperty("street")]
-            public string street;
-
-            public JarJsonTaxRateRequest(Location location)
-            {
-                country = location.country;
-                state = location.state;
-                city = location.city;
-                street = location.street;
-            }
-        }
-
-        public class JarJsonTaxOrderResponse
-        {
-            [JsonProperty("tax")]
-            public Tax tax;
-        }
-
-        public struct Tax
-        {
-            [JsonProperty("order_total_amount")]
-            public float orderTotalAmount;
-
-            [JsonProperty("shipping")]
-            public float shipping;
-
-            [JsonProperty("taxable_amount")]
-            public float taxableAmount;
-
-            [JsonProperty("amount_to_collect")]
-            public float amountToCollect;
-
-            [JsonProperty("rate")]
-            public float rate;
-
-            [JsonProperty("has_nexus")]
-            public bool hasNexus;
-
-            [JsonProperty("freight_taxable")]
-            public bool freightTaxable;
-
-            [JsonProperty("jurisdictions")]
-            public Jurisdiction jurisdictions;
-
-            [JsonProperty("breakdown")]
-            public Breakdown breakdown;
-        }
-
-        public struct Jurisdiction
-        {
-            [JsonProperty("country")]
-            public string country;
-
-            [JsonProperty("state")]
-            public string state;
-
-            [JsonProperty("county")]
-            public string county;
-
-            [JsonProperty("city")]
-            public string city;
-        }
-
-        public struct Breakdown
-        {
-            [JsonProperty("taxable_amount")]
-            public float taxableAmount;
-            [JsonProperty("tax_collectable")]
-            public float taxCollectable;
-            [JsonProperty("combined_tax_rate")]
-            public float combinedTaxrate;
-            [JsonProperty("state_taxable_amount")]
-            public float stateTaxableAmount;
-            [JsonProperty("state_tax_rate")]
-            public float stateTaxRate;
-            [JsonProperty("state_tax_collectable")]
-            public float stateTaxCollectable;
-            [JsonProperty("city_taxable_amount")]
-            public float cityTaxableAmount;
-            [JsonProperty("city_tax_rate")]
-            public float cityTaxRate;
-            [JsonProperty("special_district_tax_collectable")]
-            public float specialDistrictTaxCollectable;
-            [JsonProperty("shipping")]
-            public float shipping;
-            [JsonProperty("line_items")]
-            public LineItem[] lineItems;
-        }
-
-        public struct Nexus
-        {
-            [JsonProperty("id")]
-            public string id;
-
-            [JsonProperty("country")]
-            public string country;
-
-            [JsonProperty("zip")]
-            public string zip;
-
-            [JsonProperty("state")]
-            public string state;
-
-            [JsonProperty("city")]
-            public string city;
-
-            [JsonProperty("street")]
-            public string street;
-        }
-
-        public struct JarJsonTaxOrderRequest
-        {
-            [JsonProperty("from_country")]
-            public string fromCountry;
-
-            [JsonProperty("from_zip")]
-            public string fromZip;
-
-            [JsonProperty("from_state")]
-            public string fromState;
-
-            [JsonProperty("from_city")]
-            public string fromCity;
-
-            [JsonProperty("from_street")]
-            public string fromStreet;
-
-            [JsonProperty("to_country")]
-            public string toCountry;
-
-            [JsonProperty("to_zip")]
-            public string toZip;
-
-            [JsonProperty("to_state")]
-            public string toState;
-
-            [JsonProperty("to_city")]
-            public string toCity;
-
-            [JsonProperty("to_street")]
-            public string toStreet;
-
-            [JsonProperty("amount")]
-            public float amount;
-
-            [JsonProperty("shipping")]
-            public float shipping;
-
-            [JsonProperty("customer_id")]
-            public string customerId;
-
-            [JsonProperty("exemption_type")]
-            public string exemptionType;
-
-            [JsonProperty("nexus_addresses")]
-            public Nexus[] nexusAddresses;
-
-            [JsonProperty("line_items")]
-            public LineItem[] lineItems;
-
-            public JarJsonTaxOrderRequest(Order myorder)
-            {
-                fromCountry = myorder.from_location.country;
-                fromCity = myorder.from_location.city;
-                fromState = myorder.from_location.state;
-                fromStreet = myorder.from_location.street;
-                fromZip = myorder.from_location.zip;
-                toCountry = myorder.to_location.country;
-                toCity = myorder.to_location.city;
-                toState = myorder.to_location.state;
-                toStreet = myorder.to_location.street;
-                toZip = myorder.to_location.zip;
-                amount = myorder.amount;
-                shipping = myorder.shipping;
-                customerId = myorder.customer_id;
-                exemptionType = myorder.exemption_type;
-                lineItems = myorder.lineItems;
-
-                nexusAddresses = new Nexus[myorder.nexusAddresses.Length];
-                for(int i = 0; i < myorder.nexusAddresses.Length; i++)
-                {
-                    nexusAddresses[i].id = myorder.nexusAddresses[i].id;
-                    nexusAddresses[i].state = myorder.nexusAddresses[i].state;
-                    nexusAddresses[i].city = myorder.nexusAddresses[i].city;
-                    nexusAddresses[i].country = myorder.nexusAddresses[i].country;
-                    nexusAddresses[i].street = myorder.nexusAddresses[i].street;
-                    nexusAddresses[i].zip = myorder.nexusAddresses[i].zip;
-                }
-            }
-        }
-
         HttpClient client;
 
 
@@ -283,7 +31,7 @@ namespace TaxLib.Models
         /// <summary>
         /// This is the implementation of ITaxCollector interface for the TaxJar API.  
         /// </summary>
-        /// <param name="ApiKey"></param>
+        /// <param name="ApiKey">This API key is provided by Tax Jar.</param>
         public JarTaxCollector(string ApiKey)
         {
             client = new HttpClient();
@@ -293,8 +41,10 @@ namespace TaxLib.Models
         /// <summary>
         /// This Function 
         /// </summary>
-        /// <param name="order"></param>
-        /// <returns></returns>
+        /// <param name="order">Your Order must include a to_country, and a shipping amount.
+        /// If you are in the U.S., you must also include a Zip, and State. 
+        /// If you're providing a Nexus address, you must include the Country, and state</param>
+        /// <returns>This will return the amount of taxes that will be collected in the order as a float</returns>
         // You can find the API I'm calling for this here
         //https://developers.taxjar.com/api/reference/#post-calculate-sales-tax-for-an-order
         public async Task<float> PostTaxOnOrder(Order order)
@@ -303,7 +53,7 @@ namespace TaxLib.Models
             return jarTaxResponse.tax.amountToCollect;
         }
 
-        public async Task<JarJsonTaxOrderResponse> PostTaxOnOrderResponse(Order order)
+        private async Task<JarJsonTaxOrderResponse> PostTaxOnOrderResponse(Order order)
         {
             JarJsonTaxOrderRequest request = new JarJsonTaxOrderRequest(order);
             StringContent parameters = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request),Encoding.UTF8,"application/json");
@@ -311,6 +61,14 @@ namespace TaxLib.Models
             return jarTaxResponse;
         }
 
+        /// <summary>
+        /// This function is meant to provide the Tax service a way to call the Tax Jar Webapi to find the tax rate of a
+        /// location.
+        /// </summary>
+        /// <param name="location">The Zipcode is the only required piece of this function, execpt in the case
+        /// where the country is outside the U.S..  I've not yet seen passing any paramaters beyond the Zip in the U.S.
+        /// as having any influence on the listed tax rate.</param>
+        /// <returns>Returns a float repersentation of the tax rate for the requested location</returns>
         // You can find the API I'm calling for this here
         //https://developers.taxjar.com/api/reference/#rates
         public async Task<float> GetTaxRateForLocation(Location location)
@@ -328,6 +86,9 @@ namespace TaxLib.Models
             return JarTaxRate;
         }
 
+
+        //We should consider moving this function, and the build address from paramaters function into a Utility tool.
+        // This project is simply too small to warrant it at the moment.
         private async Task<T> AsyncTaxJarRequest<T>(string url, StringContent parameters = null)
         {
             HttpResponseMessage response;
@@ -355,10 +116,12 @@ namespace TaxLib.Models
         }
 
         /// <summary>
-        /// 
+        /// This function is a helper function that can help you pass paramaters in the Uri, due Microsofts HTTP client
+        /// having no easy way to do so.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">The object in this function must be a flat object.  We cannot handled nested objects,
+        /// It is unlikely that any website will ever ask for a nested object.</param>
+        /// <returns>The string at the end can be appended to a ? after the base Uri</returns>
         private string BuildAddressFromParamaters(object obj)
         {
             var step1 = JsonConvert.SerializeObject(obj);

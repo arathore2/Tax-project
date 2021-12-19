@@ -13,16 +13,10 @@ namespace TaxLib.Tests
     public class TaxServiceTests
     {
 
-        IConfigurationRoot config;
 
-        public TaxServiceTests()
-        {
-            config = new ConfigurationBuilder().AddUserSecrets<TaxLib.Tests.TaxServiceTests>().Build();
-
-        }
 
         [Fact]
-        public void CanInitalizeTaxService()
+        public void CanInitalizeJarTaxService()
         {
             //Arrange
             JarTaxCollector jTax = new JarTaxCollector(Environment.GetEnvironmentVariable("JarApiString"));
@@ -31,6 +25,62 @@ namespace TaxLib.Tests
             //Assert
             Assert.NotNull(tax);
             Assert.NotNull(jTax);
+        }
+
+        [Fact]
+        public async void CanGetTestTaxRate()
+        {
+            //Arrange
+            TestTaxCollector testTax = new TestTaxCollector();
+            TaxService service = new TaxService(testTax);
+            Location location = new Location
+            {
+                city = "Santa%20Monica",
+                state = "CA",
+                country = "US",
+                zip = "90404"
+            };
+            //Act
+            double calculatedTaxrate = await service.GetTaxRateForLocation(location);
+            //Assert
+            Assert.Equal(0.00, Math.Round(calculatedTaxrate,2));
+        }
+
+        [Fact]
+        public async void CanGetTestTaxOrder()
+        {
+            //Arrange
+            TestTaxCollector testTax = new TestTaxCollector();
+            TaxService service = new TaxService(testTax);
+            Location from_location = new Location()
+            {
+                country = "US",
+                zip = "92093",
+                state = "CA",
+                city = "La Jolla",
+                street = "9500 Gilman Drive"
+            };
+            Location to_location = new Location()
+            {
+                country = "US",
+                zip = "90002",
+                state = "CA",
+                city = "Los Angeles",
+                street = "1335 E 103rd St"
+            };
+            Order order = new Order
+            {
+                from_location = from_location,
+                to_location = to_location,
+                amount = 15,
+                shipping = (float)1.5,
+                nexusAddresses = new Nexus[] { new Nexus() { id = "Main Location", country = "U.S.", city = "La Jolla", state = "CA", zip = "92093", street = "9500 Gilman Drive" } },
+                lineItems = new LineItem[] { new LineItem() { id = "1", product_tax_code = "20010", unit_price = 15, quantity = 1, discount = 0 } }
+            };
+            //Act
+            double calculatedTaxAmount = await service.PostTaxOnOrder(order);
+            //Assert
+            Assert.Equal(10.0, Math.Round(calculatedTaxAmount, 4));
         }
 
         [Fact]
@@ -50,8 +100,7 @@ namespace TaxLib.Tests
             //Act
             double calculatedTaxrate = await tax.GetTaxRateForLocation(location);
             //Assert
-            Assert.Equal((double)0.0975, calculatedTaxrate);
-
+            Assert.Equal(0.1025, Math.Round(calculatedTaxrate,4));
         }
 
         [Fact]
@@ -87,9 +136,9 @@ namespace TaxLib.Tests
                 lineItems = new LineItem[] {new LineItem() { id = "1", product_tax_code = "20010", unit_price = 15, quantity = 1, discount = 0} }
             };
             //Act
-            float result = await tax.PostTaxOnOrder(order);
+            double result = await tax.PostTaxOnOrder(order);
             //Assert
-            Assert.Equal(1.35, result);
+            Assert.Equal(1.43, Math.Round(result,2));
         }
     }
 }

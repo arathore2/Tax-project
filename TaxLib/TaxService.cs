@@ -48,6 +48,11 @@ namespace TaxLib
         public string city;
         public string street;
     }
+
+    /// <summary>
+    /// The Tax Service is meant to help people calculate the amount of Taxes they need to either collect, or can expect to give based on their location
+    /// The Tax Service must be initalized using a Tax Collector that implements the ITaxCollector interface.  
+    /// </summary>
     public class TaxService
     {
         ITaxCollector m_myTaxCollector;
