@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TaxLib.Tests": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Key": "Value"
+      }
+    }
+  }
+}

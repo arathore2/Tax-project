@@ -10,6 +10,6 @@ namespace TaxLib.Models.Interfaces
         //Since both of these functions in most implementations will be making Webcalls, lets go ahead and make them compatible with Async functions.
         Task<float> GetTaxRateForLocation(Location location);
 
-        Task<float> GetTaxOnOrder(Order order);
+        Task<float> PostTaxOnOrder(Order order);
     }
 }

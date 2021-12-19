@@ -6,3 +6,4 @@ C:\Users\ratho\source\repos\Tax-Project\TaxLib\bin\Debug\netstandard2.0\TaxLib.d
 C:\Users\ratho\source\repos\Tax-Project\TaxLib\bin\Debug\netstandard2.0\TaxLib.pdb
 C:\Users\ratho\source\repos\Tax-Project\TaxLib\obj\Debug\netstandard2.0\TaxLib.dll
 C:\Users\ratho\source\repos\Tax-Project\TaxLib\obj\Debug\netstandard2.0\TaxLib.pdb
+C:\Users\ratho\source\repos\Tax-Project\TaxLib\obj\Debug\netstandard2.0\TaxLib.csproj.CoreCompileInputs.cache

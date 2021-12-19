@@ -1,19 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using TaxLib.Models.Interfaces;
 
 namespace TaxLib
 {
 
 
+    public struct Nexus
+    {
+        public string id;
+        public string country;
+        public string zip;
+        public string state;
+        public string city;
+        public string street;
+    }
+
     public struct Order
     {
-        Location from_location; 
-        Location to_location;
-        float amount;
-        float shipping;
+        public Location from_location;
+        public Location to_location;
+        public float amount;
+        public float shipping;
+        public string customer_id;
+        public string exemption_type;
+        public Nexus[] nexusAddresses;
+        public LineItem[] lineItems;
 
+    }
+
+    public struct LineItem
+    {
+        public string id;
+        public int quantity;
+        public string product_tax_code;
+        public float unit_price;
+        public float discount;
     }
 
     public struct Location
@@ -32,14 +56,14 @@ namespace TaxLib
             m_myTaxCollector = taxCollector;
         }
 
-        public float GetTaxRateForLocation(Location location)
+        public Task<float> GetTaxRateForLocation(Location location)
         {
             return m_myTaxCollector.GetTaxRateForLocation(location);
         }
 
-        public float GetTaxOnOrder(Order order)
+        public Task<float> PostTaxOnOrder(Order order)
         {
-            return m_myTaxCollector.GetTaxOnOrder(order);
+            return m_myTaxCollector.PostTaxOnOrder(order);
         }
     }
 }
