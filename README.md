@@ -12,7 +12,7 @@ After cloning the Repo, if you want to be able to run the test cases you'll need
 
 https://www.architectryan.com/2018/08/31/how-to-change-environment-variables-on-windows-10/
 
-After setting the enviornment variable launch the .sln with Visual Studio, the project will intialize after a few moments.  Once its done loading, you can simply right click on the Taxlib.tests project in the solution explorer, and click "run Tests".  If the tests fail due to a 401 unauthorized error, then that means your API key is either invalid, or Visual Studio couldn't grab the Environment Variable, in which case, restarting Visual Studio should fix it, as Visual Studio only updates its Enviornment Variables on startup.
+After setting the enviornment variable launch the .sln with Visual Studio, the project will intialize after a few moments.  Once its done loading, you can simply right click on the Taxlib.tests project in the solution explorer, and click "run Tests".  If your tests are under about 300 ms, theres a good chance that my tests are running with my mock TestTaxCollector, and that your Environment Variables have not been updated by Visual Studio.  Simply restart Visual Studio, as VS only updates its Environment Variables on startup.
 
 ## Extending Software:
 
