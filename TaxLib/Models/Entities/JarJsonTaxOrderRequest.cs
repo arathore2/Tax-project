@@ -5,7 +5,47 @@ using System.Text;
 
 namespace TaxLib.Models.Entities
 {
-    public struct JarJsonTaxOrderRequest
+
+    public struct Nexus
+    {
+        [JsonProperty("id")]
+        public string id;
+
+        [JsonProperty("country")]
+        public string country;
+
+        [JsonProperty("zip")]
+        public string zip;
+
+        [JsonProperty("state")]
+        public string state;
+
+        [JsonProperty("city")]
+        public string city;
+
+        [JsonProperty("street")]
+        public string street;
+    }
+
+    public struct LineItem
+    {
+        [JsonProperty("id")]
+        public string id;
+
+        [JsonProperty("quantity")]
+        public int quantity;
+
+        [JsonProperty("product_tax_code")]
+        public string productTaxCode;
+
+        [JsonProperty("unit_price")]
+        public float unitPrice;
+
+        [JsonProperty("discount")]
+        public float discount;
+    }
+
+    public class JarJsonTaxOrderRequest
     {
         [JsonProperty("from_country")]
         public string fromCountry;
@@ -71,7 +111,6 @@ namespace TaxLib.Models.Entities
             shipping = myorder.shipping;
             customerId = myorder.customer_id;
             exemptionType = myorder.exemption_type;
-            lineItems = myorder.lineItems;
 
             nexusAddresses = new Nexus[myorder.nexusAddresses.Length];
             for (int i = 0; i < myorder.nexusAddresses.Length; i++)
@@ -83,27 +122,16 @@ namespace TaxLib.Models.Entities
                 nexusAddresses[i].street = myorder.nexusAddresses[i].street;
                 nexusAddresses[i].zip = myorder.nexusAddresses[i].zip;
             }
+
+            lineItems = new LineItem[myorder.lineItems.Length];
+            for(int i = 0; i < myorder.lineItems.Length; i++)
+            {
+                lineItems[i].id = myorder.lineItems[i].id;
+                lineItems[i].quantity = myorder.lineItems[i].quantity;
+                lineItems[i].productTaxCode = myorder.lineItems[i].product_tax_code;
+                lineItems[i].unitPrice = myorder.lineItems[i].unit_price;
+                lineItems[i].discount = myorder.lineItems[i].discount;
+            }
         }
-    }
-
-    public struct Nexus
-    {
-        [JsonProperty("id")]
-        public string id;
-
-        [JsonProperty("country")]
-        public string country;
-
-        [JsonProperty("zip")]
-        public string zip;
-
-        [JsonProperty("state")]
-        public string state;
-
-        [JsonProperty("city")]
-        public string city;
-
-        [JsonProperty("street")]
-        public string street;
     }
 }

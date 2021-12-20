@@ -5,17 +5,10 @@ using System.Text;
 
 namespace TaxLib.Models.Entities
 {
-    class JarJsonTaxRateResponse
-    {
-        [JsonProperty("rate")]
-        public Rate rate;
-    }
 
-    //I'm putting Rate inside the Response object, due to how Tax Jar returns objects.
+    // I'm putting Rate inside the Response object, due to how Tax Jar returns on the rates endpoint.
     // This way, I can deseralize the objects far easier.
-
-
-    public class Rate
+    public struct Rate
     {
         [JsonProperty("zip")]
         public string zip;
@@ -52,6 +45,12 @@ namespace TaxLib.Models.Entities
 
         [JsonProperty("freight_taxable")]
         public bool freight_taxable;
+    }
+
+    class JarJsonTaxRateResponse
+    {
+        [JsonProperty("rate")]
+        public Rate rate;
     }
 
 }

@@ -5,11 +5,6 @@ using System.Text;
 
 namespace TaxLib.Models.Entities
 {
-    public class JarJsonTaxOrderResponse
-    {
-        [JsonProperty("tax")]
-        public Tax tax;
-    }
 
     public struct Tax
     {
@@ -80,6 +75,12 @@ namespace TaxLib.Models.Entities
         public float shipping;
         [JsonProperty("line_items")]
         public LineItem[] lineItems;
+    }
+
+    public class JarJsonTaxOrderResponse
+    {
+        [JsonProperty("tax")]
+        public Tax tax;
     }
 
 }

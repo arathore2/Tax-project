@@ -11,13 +11,13 @@ namespace TaxLib.Models
         public async Task<float> GetTaxRateForLocation(Location location)
         {
             
-            return (float)0.0;
+            return (float)0.1025;
         }
 
         public async Task<float> PostTaxOnOrder(Order order)
         {
 
-            return (float)10.0;
+            return (float)1.43;
         }
     }
 }
