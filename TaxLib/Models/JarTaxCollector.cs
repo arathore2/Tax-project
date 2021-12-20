@@ -20,7 +20,7 @@ namespace TaxLib.Models
 
     public class JarTaxCollector : ITaxCollector
     {
-        // We'll probably want to move this to a config file in the future, but unless the Uri changes, it should be fine. 
+        // Move this variable to a config file in the future to handle when the uri changes.
         private string JarTaxCollectorUri = "https://api.taxjar.com/v2/";
 
         HttpClient client;
@@ -37,12 +37,12 @@ namespace TaxLib.Models
         }
 
         /// <summary>
-        /// This function is meant to us to determine how much taxes will need to be collected based on an order.
+        /// Determines how much taxes will be collected based on the order
         /// </summary>
-        /// <param name="order">Your Order must include a to_country, and a shipping amount.
-        /// If you are in the U.S., you must also include a Zip, and State. 
-        /// If you're providing a Nexus address, you must include the Country, and state</param>
-        /// <returns>This will return the amount of taxes that will be collected in the order as a float</returns>
+        /// <param name="order"> The order must include a to_country, and a shipping amount.
+        /// If the order.from_country == US., the Zip and State must be included. 
+        /// If Nexus Address exists, the Country, and state must be included</param>
+        /// <returns> Returns the amount of taxes that will be collected in the order as a float </returns>
         // You can find the API I'm calling for this here
         // https://developers.taxjar.com/api/reference/#post-calculate-sales-tax-for-an-order
         public async Task<float> PostTaxOnOrder(Order order)
@@ -53,11 +53,11 @@ namespace TaxLib.Models
 
 
         /// <summary>
-        /// This function makes a POST web call to the TaxJar API, and pulls the response into an object.
+        /// Makes a POST web call to the TaxJar API, and pulls the response into an object.
         /// </summary>
-        /// <param name="order">Your Order must include a to_country, and a shipping amount.
-        /// If you are in the U.S., you must also include a Zip, and State. 
-        /// If you're providing a Nexus address, you must include the Country, and state</param>
+        /// <param name="order"> The order must include a to_country, and a shipping amount.
+        /// If the order.from_country == US., the Zip and State must be included. 
+        /// If Nexus Address exists, the Country, and state must be included </param>
         /// <returns>The returned Object JarJsonTaxOrderResponse includes every field in the Tax Jar Api's Taxes end point.</returns>
         private async Task<JarJsonTaxOrderResponse> PostTaxOnOrderResponse(Order order)
         {
@@ -68,7 +68,7 @@ namespace TaxLib.Models
         }
 
         /// <summary>
-        /// This function is meant to provide the Tax service a way to call the Tax Jar Webapi to find the tax rate of a
+        /// Calls the Webjar API to find the tax rate of a location
         /// location.
         /// </summary>
         /// <param name="location">The Zipcode is the only required piece of this function, execpt in the case
@@ -92,9 +92,14 @@ namespace TaxLib.Models
         }
 
 
-        // We should consider moving this function, and the BuildAddressFromParamaters function into a Utility tool.
-        // This project is simply too small to warrant it at the moment.
-        // We could also split this function into two, one post, and one get, but the code will look pretty much identical, so it makes sense to keep it contained here.
+        /// <summary>
+        /// Sends a webcall to the string url.  If no paramaters are posted, it will do a GET, otherwise it'll make a POST call.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"> The full url to the end point </param>
+        /// <param name="parameters"> The body of the Post </param>
+        /// <returns> The return object should be an object that is deserializable from a json string </returns>
+        /// <exception cref="Exception"></exception>
         private async Task<T> AsyncTaxJarRequest<T>(string url, StringContent parameters = null)
         {
             HttpResponseMessage response;

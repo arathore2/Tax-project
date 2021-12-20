@@ -50,7 +50,7 @@ namespace TaxLib
     }
 
     /// <summary>
-    /// The Tax Service is meant to help people calculate the amount of Taxes they need to either collect, or can expect to give based on their location
+    /// The TaxService provides a way to find tax information based on given inputs.
     /// The Tax Service must be initalized using a Tax Collector that implements the ITaxCollector interface.  
     /// </summary>
     public class TaxService

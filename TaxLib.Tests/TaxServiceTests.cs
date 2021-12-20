@@ -22,7 +22,7 @@ namespace TaxLib.Tests
                 return new JarTaxCollector(apiKey);
         }
     }
-
+    // TODO: Comment on code flow for when HTTP call is made vs mock calls.
     public class TaxServiceTests
     {
 
